@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Place index{% endblock %}
+
+{% block body %}
+    <div class="container">
+    <h1>Список мест</h1>
+    <table class="table">
+        <tbody>
+        {% for place in places %}
+            <tr>
+                <td><strong><a href="{{ path('app_place', {'placeId': place.id}) }}">{{ place.title }}</a></strong></td>
+            </tr>
+            {% for package in place.package %}
+                <tr>
+                    <td>
+                        <ul>
+                            <li>({{ package.quantity }}) {{ package.title }}</li>
+                        </ul>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td>
+                        <ul>
+                            <li>Нет упаковок</li>
+                        </ul>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td >Нет мест</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    </div>
+{% endblock %}
