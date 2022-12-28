@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Dto\QrCode\Request\QrCodeDTO;
 use App\Form\PlaceAddRemoveType;
+use App\Form\PlacesSearchType;
 use App\Form\QrCodeType;
 use App\Repository\PlaceRepository;
 use App\Service\PlaceService;
@@ -22,12 +23,20 @@ class PlaceController extends AbstractController
     #[Route('/places', name: 'app_place_index')]
     public function index(Request $request, PlaceRepository $placeRepository): Response
     {
-//        $placeTitle = $request->get('placeTile');
-//        $packageTitle = $request->get('packageTitle');
-//        $places = $placeRepository->findByPlaceAndPackage($placeTitle, $packageTitle);
+        $placeTitle = null;
+        $packageTitle = null;
+        $form = $this->createForm(PlacesSearchType::class);
 
-        return $this->render('place/index.html.twig', [
-            'places' => $placeRepository->findAll(),
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $placeTitle = $form->get('placeTitle')->getData();
+            $packageTitle = $form->get('packageTitle')->getData();
+        }
+
+        $places = $placeRepository->findByPlaceAndPackage($placeTitle, $packageTitle);
+        return $this->renderForm('place/index.html.twig', [
+            'places' => $places,
+            'searchForm' => $form,
         ]);
     }
 

@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use App\Model\QrCodeDTO;
+use App\Dto\QrCode\Request\QrCodeDTO;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;

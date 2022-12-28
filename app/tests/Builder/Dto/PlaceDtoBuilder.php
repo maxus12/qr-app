@@ -2,7 +2,9 @@
 
 namespace App\Tests\Builder\Dto;
 
-use App\Dto\Package\Request\PlaceDTO;
+
+
+use App\Dto\Place\Request\PlaceDTO;
 
 class PlaceDtoBuilder
 {
@@ -18,7 +20,7 @@ class PlaceDtoBuilder
     public function build(): PlaceDTO
     {
         $placeDto = new PlaceDTO();
-        $placeDto->setPackageTitle($this->placeTitle);
+        $placeDto->setPlaceTitle($this->placeTitle);
         $placeDto->setQrCodeTitle($this->qrCodeTitle);
 
         return $placeDto;

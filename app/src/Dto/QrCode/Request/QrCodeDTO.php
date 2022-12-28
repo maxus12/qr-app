@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Dto\QrCode\Request;;
+namespace App\Dto\QrCode\Request;
 
 use Symfony\Component\Validator\Constraints as Assert;
 

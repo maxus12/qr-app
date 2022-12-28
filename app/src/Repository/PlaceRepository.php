@@ -48,16 +48,21 @@ class PlaceRepository extends ServiceEntityRepository
      */
     public function findByPlaceAndPackage(?string $placeTitle, ?string $packageTitle, ?int $page = 1, ?int $limit = 10): array
     {
-        $qb = $this->createQueryBuilder('pl');
+        $qb = $this->createQueryBuilder('p');
+
         if ($this->isValidFilter($placeTitle)) {
-            $qb->andWhere('pl.title LIKE :title')->setParameter('title', sprintf('\%%s\%', $placeTitle));
+            $qb->andWhere('p.title LIKE :title')
+                ->setParameter('title', sprintf('%%%s%%', $placeTitle))
+                ->addOrderBy('p.title', 'ASC');
         }
         if ($this->isValidFilter($packageTitle)) {
-            $qb->leftJoin('p.package', 'p')->andWhere('p.title LIKE :title')->setParameter('title', sprintf('\%%s\%', $packageTitle));
+            $qb->leftJoin('p.package', 'pk')
+                ->andWhere('pk.title LIKE :title')
+                ->setParameter('title', sprintf('%%%s%%', $packageTitle))
+                ->addOrderBy('pk.title', 'ASC');
         }
 
         return $qb
-            ->addOrderBy('pl.title', 'ASC')
             ->setMaxResults($limit)
             ->setFirstResult(($page - 1) * $limit)
             ->getQuery()
@@ -66,7 +71,7 @@ class PlaceRepository extends ServiceEntityRepository
 
     private function isValidFilter(?string $value): bool
     {
-        return $value !== null && strlen($value) > 2 ;
+        return $value !== null && strlen($value) >1 ;
     }
 
 //    /**

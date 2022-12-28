@@ -3,8 +3,10 @@
 {% block title %}Place index{% endblock %}
 
 {% block body %}
-    <div class="container">
     <h1>Список мест</h1>
+    <div>
+        {{ form(searchForm) }}
+    </div>
     <table class="table">
         <tbody>
         {% for place in places %}
@@ -35,5 +37,4 @@
         {% endfor %}
         </tbody>
     </table>
-    </div>
 {% endblock %}

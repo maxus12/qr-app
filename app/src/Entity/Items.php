@@ -15,6 +15,7 @@ class Items
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
+//    #[ORM\Column(name: "ID")]
     #[ORM\Column]
     private ?int $id = null;
 
