@@ -16,7 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class PlaceController extends AbstractController
 {
-    public function __construct(private PlaceService $placeService, private QrCodeService $qrCodeService)
+    public function __construct(private PlaceService $placeService,
+                                private QrCodeService $qrCodeService)
     {
     }
 
@@ -33,10 +34,18 @@ class PlaceController extends AbstractController
             $packageTitle = $form->get('packageTitle')->getData();
         }
 
-        $places = $placeRepository->findByPlaceAndPackage($placeTitle, $packageTitle);
+        $page = $request->query->get('page') ?? 1;
+        $countPages = $placeRepository->countPages($placeTitle, $packageTitle);
+        $page = $page <= $countPages ? $page : $countPages;
+
+        $places = $placeRepository->findByPlaceAndPackage($placeTitle, $packageTitle, $page);
+
         return $this->renderForm('place/index.html.twig', [
             'places' => $places,
             'searchForm' => $form,
+            'countPages' => $countPages,
+            'page' => $page,
+
         ]);
     }
 

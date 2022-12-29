@@ -40,25 +40,23 @@ class PlaceRepository extends ServiceEntityRepository
     }
 
     /**
-     * @param string|null $placeTitle
-     * @param string|null $packageTitle
-     * @param int|null $page
-     * @param int|null $limit
      * @return Place[]
      */
     public function findByPlaceAndPackage(?string $placeTitle, ?string $packageTitle, ?int $page = 1, ?int $limit = 10): array
     {
-        $qb = $this->createQueryBuilder('p');
+        $qb = $this->createQueryBuilder('p')
+            ->leftJoin('p.package', 'pk')
+            ->addSelect('pk');
 
         if ($this->isValidFilter($placeTitle)) {
-            $qb->andWhere('p.title LIKE :title')
-                ->setParameter('title', sprintf('%%%s%%', $placeTitle))
+            $qb->Where('p.title LIKE :p_title')
+                ->setParameter('p_title', sprintf('%%%s%%', $placeTitle))
                 ->addOrderBy('p.title', 'ASC');
         }
         if ($this->isValidFilter($packageTitle)) {
-            $qb->leftJoin('p.package', 'pk')
-                ->andWhere('pk.title LIKE :title')
-                ->setParameter('title', sprintf('%%%s%%', $packageTitle))
+            $qb
+                ->andWhere('pk.title LIKE :pk_title')
+                ->setParameter('pk_title', sprintf('%%%s%%', $packageTitle))
                 ->addOrderBy('pk.title', 'ASC');
         }
 
@@ -67,6 +65,28 @@ class PlaceRepository extends ServiceEntityRepository
             ->setFirstResult(($page - 1) * $limit)
             ->getQuery()
             ->getResult();
+
+    }
+
+    public function countPages(?string $placeTitle, ?string $packageTitle, ?int $limit = 10): int
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->leftJoin('p.package', 'pk')
+            ->select('count(p)');
+
+        if ($this->isValidFilter($placeTitle)) {
+            $qb->Where('p.title LIKE :p_title')
+                ->setParameter('p_title', sprintf('%%%s%%', $placeTitle))
+                ->addOrderBy('p.title', 'ASC');
+        }
+        if ($this->isValidFilter($packageTitle)) {
+            $qb
+                ->andWhere('pk.title LIKE :pk_title')
+                ->setParameter('pk_title', sprintf('%%%s%%', $packageTitle))
+                ->addOrderBy('pk.title', 'ASC');
+        }
+
+        return ceil($qb->getQuery()->getOneOrNullResult()[1] / $limit);
     }
 
     private function isValidFilter(?string $value): bool

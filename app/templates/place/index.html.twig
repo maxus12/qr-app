@@ -13,14 +13,16 @@
             <tr>
                 <td><strong><a href="{{ path('app_place', {'placeId': place.id}) }}">{{ place.title }}</a></strong></td>
             </tr>
-            {% for package in place.package %}
-                <tr>
-                    <td>
-                        <ul>
-                            <li>({{ package.quantity }}) {{ package.title }}</li>
-                        </ul>
-                    </td>
-                </tr>
+            {% if place.package.count > 0  %}
+                {% for i in 0 .. place.package.count - 1 %}
+                    <tr>
+                        <td>
+                            <ul>
+                                <li>({{ place.package[i].quantity }}) {{ place.package[i].title }}</li>
+                            </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
             {% else %}
                 <tr>
                     <td>
@@ -29,7 +31,7 @@
                         </ul>
                     </td>
                 </tr>
-            {% endfor %}
+            {% endif %}
         {% else %}
             <tr>
                 <td >Нет мест</td>
@@ -37,4 +39,24 @@
         {% endfor %}
         </tbody>
     </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item {{ page == 1 ? 'disabled' }}">
+                <a class="page-link" href="{{ path('app_place_index', {'page': page - 1 >= 1 ? page - 1 : 1}) }}"  aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+{#                {% for i in (page - 3 >= 1 ? page - 3 : 1)..(page + 3 <= countPages ? page + 3 : countPages) %}#}
+                {% for i in (page - 3 > 1 ? (countPages - page < 3 ? countPages - 6 : page - 3) : 1)..(page + 3 < countPages ? (page < 4 ? 7 : page + 3) : countPages) %}
+                    <li class="page-item {{ i == page ? 'active' : '' }}" aria-current="page">
+                        <a class="page-link" href="{{ path('app_place_index', {'page': i}) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+            <li class="page-item {{ page == countPages ? 'disabled' }}">
+                <a class="page-link" href="{{ path('app_place_index', {'page': page + 1 <= countPages ? page + 1 : countPages }) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 {% endblock %}
